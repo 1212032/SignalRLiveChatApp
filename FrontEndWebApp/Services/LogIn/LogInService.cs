@@ -1,8 +1,10 @@
 namespace FrontEndWebApp.Services.LogIn;
+using FrontEndWebApp.Services.dto;
 
 public class LogInService
 {
     private readonly UserService userService;
+    private readonly PasswordHasher<UserDto> passwordHasher = new();
 
     public LogInService(UserService userService)
     {
@@ -11,18 +13,22 @@ public class LogInService
 
     public async Task<bool> LogInAsync(string email, string password)
     {
-        // Here you would typically call an API to validate the user's credentials.
-        // For now, we will simulate a login check.
-        
         var user = await userService.GetUserByUsernameOrEmailAsync(null, email);
-        if (user != null && user.Password == password)
+
+        if (user == null)
         {
-            // Simulate successful login
+            Console.WriteLine("Login failed: user not found.");
+            return false;
+        }
+
+        var result = passwordHasher.VerifyHashedPassword(user, user.Password, password);
+        if (result == PasswordVerificationResult.Success)
+        {
             Console.WriteLine($"User {user.Username} logged in successfully.");
             return true;
         }
 
-        Console.WriteLine("Login failed: Invalid credentials.");
+        Console.WriteLine("Login failed: Invalid password.");
         return false;
     }
 }

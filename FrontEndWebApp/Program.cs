@@ -16,6 +16,8 @@ builder.Services.AddHttpClient<ApiClient>(client =>
     client.BaseAddress = new Uri(baseUrl);
 });
 
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<LogInService>();
 
 var app = builder.Build();
 
