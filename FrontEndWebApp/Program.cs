@@ -1,10 +1,21 @@
 using FrontEndWebApp.Components;
+using FrontEndWebApp.services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var baseUrl = builder.Configuration.GetConnectionString("BaseUrl");
+
+builder.Services.AddHttpClient<ApiClient>(client =>
+{
+    // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
+    // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
+    client.BaseAddress = new Uri(baseUrl);
+});
+
 
 var app = builder.Build();
 
